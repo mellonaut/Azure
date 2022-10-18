@@ -1,5 +1,6 @@
 # Set up Chocolatey
 # Download the boxstarter bootstrap
+Set-ExecutionPolicy -Bypass 
 . { iwr -useb https://boxstarter.org/bootstrapper.ps1 } | iex; Get-Boxstarter -Force
 
 Write-Host "Initializing that chocolatey goodness"
@@ -8,12 +9,20 @@ choco feature enable -n allowEmptyChecksums
 
 choco install belarcadvisor
 choco install adobereader 
-choco install microsoft-teams
-choco install microsoft-monitoring-agent
+# choco install microsoft-teams
+# choco install microsoft-monitoring-agent
 
-# Azure Monitoring Agent
-iwr https://go.microsoft.com/fwlink/?linkid=2192409 -o azuremonitoringagent.msi
-msiexec /i ./azuremonitoringagent.msi /qn
+# Sysmon w/ custom configuration
+mkdir "C:\sysmon";
+Invoke-WebRequest -Uri "https://github.com/mellonaut/sysmon/raw/main/sysmon.zip" -OutFile "C:\sysmon\sysmon.zip";
+Expand-Archive "c:\sysmon\sysmon.zip" -DestinationPath "C:\sysmon";
+cd "c:\sysmon";
+c:\sysmon\sysmon.exe -acceptEula -i c:\sysmon\sysmonconfig.xml
+
+
+# # Azure Monitoring Agent
+# iwr https://go.microsoft.com/fwlink/?linkid=2192409 -o azuremonitoringagent.msi
+# msiexec /i ./azuremonitoringagent.msi /qn
 
 Set-WindowsExplorerOptions -EnableShowFileExtensions
 Disable-BingSearch
@@ -57,12 +66,7 @@ Set-SmbServerConfiguration @Parameters
 # Disable Powershell 2.0 to prevent downgrade attacks
 Disable-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2Root
 
-# Sysmon w/ custom configuration
-mkdir "C:\sysmon";
-Invoke-WebRequest -Uri "https://github.com/mellonaut/sysmon/raw/main/sysmon.zip" -OutFile "C:\sysmon\sysmon.zip";
-Expand-Archive "c:\sysmon\sysmon.zip" -DestinationPath "C:\sysmon";
-cd "c:\sysmon";
-c:\sysmon\sysmon.exe -acceptEula -i c:\sysmon\sysmonconfig.xml
+
 
 Register-PSRepository -Default -InstallationPolicy Trusted
 Register-PSRepository -Name PSGallery -SourceLocation https://www.powershellgallery.com/api/v2/ -InstallationPolicy Trusted
