@@ -20,9 +20,9 @@ cd "c:\sysmon";
 c:\sysmon\sysmon.exe -acceptEula -i c:\sysmon\sysmonconfig.xml
 
 
-# # Azure Monitoring Agent
-# iwr https://go.microsoft.com/fwlink/?linkid=2192409 -o azuremonitoringagent.msi
-# msiexec /i ./azuremonitoringagent.msi /qn
+# Azure Monitoring Agent
+iwr https://go.microsoft.com/fwlink/?linkid=2192409 -o azuremonitoringagent.msi
+msiexec /i ./azuremonitoringagent.msi /qn
 
 Set-WindowsExplorerOptions -EnableShowFileExtensions
 Disable-BingSearch
@@ -48,10 +48,10 @@ Write-Host -ForegroundColor Green "Disabling LLMNR"
 REG ADD  “HKLM\Software\policies\Microsoft\Windows NT\DNSClient”
 REG ADD  “HKLM\Software\policies\Microsoft\Windows NT\DNSClient” /v ” EnableMulticast” /t REG_DWORD /d “0” /f
 
-# Disable NBT-NS
-Write-Host -ForegroundColor Green "Disabling NBT-NS"
-$regkey = "HKLM:SYSTEM\CurrentControlSet\services\NetBT\Parameters\Interfaces"
-Get-ChildItem $regkey |foreach { Set-ItemProperty -Path "$regkey\$($_.pschildname)" -Name NetbiosOptions -Value 2 -Verbose}
+# # Disable NBT-NS
+# Write-Host -ForegroundColor Green "Disabling NBT-NS"
+# $regkey = "HKLM:SYSTEM\CurrentControlSet\services\NetBT\Parameters\Interfaces"
+# Get-ChildItem $regkey |foreach { Set-ItemProperty -Path "$regkey\$($_.pschildname)" -Name NetbiosOptions -Value 2 -Verbose}
 
 Write-Host -ForegroundColor Green "Enabling SMB signing as always"
 # Enable SMB signing as 'always'
@@ -75,7 +75,7 @@ Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
 Install-Module -Name PSWindowsUpdate
 # Get-WUInstall -AcceptAll -AutoReboot
 
-Get-WUInstall -AcceptAll –IgnoreReboot
+Get-WUInstall -AcceptAll -IgnoreReboot
 
 
 Write-Host "Removing Roblox and Clippy..." -ForegroundColor "Yellow"
