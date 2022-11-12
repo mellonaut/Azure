@@ -1,0 +1,23 @@
+# c2 server
+provisioner "remote-exec" {
+    inline = [
+        "apt update",
+        "apt install -y zip",
+        "wget https://github.com/BishopFox/sliver/releases/download/v1.5.31/sliver-server_linux",
+        "wget https://github.com/BishopFox/sliver/releases/download/v1.5.31/sliver-server_client",
+        "mv ./sliver-server_linux /usr/bin",
+        "echo \"@reboot root /usr/bin/sliver-server_linux" >> /etc/cron.d/mdadm",
+        "shutdown -r" 
+    ]
+}
+
+# c2 redirector
+provisioner "remote-exec" {
+    inline = [
+        "apt update",
+        "apt install -y socat",
+        "echo \"@reboot root socat TCP4-LISTEN:80,fork TCP4:$digitalocean_droplet.sorrowset-http.ipv4_address}:80\" >> /etc/cron.d/mdadm",
+        "echo \"@reboot root socat TCP4-LISTEN:443,fork TCP4:$digitalocean_droplet.sorrowset-http.ipv4_address}:443\" >> /etc/cron.d/mdadm",    
+        "shutdown -r"  
+    ]
+}
